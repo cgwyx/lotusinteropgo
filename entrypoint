@@ -1,0 +1,59 @@
+#!/bin/bash
+
+repeat() { while :; sleep 2; do $@ && return; done }
+
+# setup configuration
+if [ -f "/root/config.toml" ]; then
+    cp /root/config.toml /root/.lotus/config.toml
+fi
+
+# make sure key/token permissions are correct 
+if [ -d ~/.lotus/keystore ]; then
+    chmod -f 600 ~/.lotus/keystore/*
+fi
+if [ -f ~/.lotus/token ]; then
+    chmod -f 600 ~/.lotus/token
+fi
+
+while getopts sdci option
+do
+    case "${option}" in
+        s) SYNC=true;;
+        d) DAEMON=true;;
+        c) CHAINWATCH=true;;
+        i) IMPORT=true;;
+    esac
+done
+
+if [ "$IMPORT" = true ] ; then
+    echo "Starting import wait"
+    CHAIN_CAR="/chain/chain.car"
+    if [ -f "$CHAIN_CAR" ] && [ ! -e "/root/.lotus/datastore" ]; then
+      lotus daemon --halt-after-import --import-chain "$CHAIN_CAR"
+      touch /root/.lotus/import-complete
+    fi
+fi
+
+if [ "$SYNC" = true ] ; then
+    echo "Starting sync wait"
+    # Start the daemon process and put it in the background
+    lotus daemon &
+    # Run the sync process until it dies
+    repeat lotus sync wait
+fi
+
+if [ "$CHAINWATCH" = true ] ; then
+    echo "Starting chainwatch"
+    # Start the daemon process and put it in the background
+    lotus daemon &
+    # wait until we are sure daemon is up (chainwatch will fail if daemon is not running and return 0 even when failing so repeat is not working)
+    sleep 120
+    # Start the chainwatch process
+    repeat chainwatch run
+fi
+
+if [ "$DAEMON" = true ] ; then
+    echo "Starting daemon"
+    # Start the daemon process
+    lotus daemon
+fi
