@@ -55,6 +55,8 @@ EXPOSE 1347/tcp
 
 ENV IPFS_GATEWAY=https://proof-parameters.s3.cn-south-1.jdcloud-oss.com/ipfs/
 
+ENV FIL_PROOFS_MAXIMIZE_CACHING=1
+
 WORKDIR /lotus
 
 
