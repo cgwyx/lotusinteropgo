@@ -58,5 +58,7 @@ ENV IPFS_GATEWAY=https://proof-parameters.s3.cn-south-1.jdcloud-oss.com/ipfs/
 WORKDIR /lotus
 
 
+CMD ["./lotus", "daemon", "&"]
 #ENTRYPOINT ["/bin/entrypoint"]
-CMD ["-d"]
+#CMD ["-d"]
+
