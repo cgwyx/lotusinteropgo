@@ -10,11 +10,12 @@ RUN echo "Building lotus from branch $BRANCH"
 RUN apt-get update -y && \
     apt-get install sudo curl git mesa-opencl-icd ocl-icd-opencl-dev gcc git bzr jq pkg-config -y
 
-RUN git clone https://github.com/filecoin-project/lotus.git --depth 1 --branch $BRANCH && \
-    cd lotus && \
-    make clean && \
-    make lotus && \
-    install -C ./lotus /usr/local/bin/lotus
+RUN git clone -b $BRANCH https://github.com/filecoin-project/lotus.git &&\
+    cd lotus &&\
+    make clean all &&\
+    make install &&\
+    make build bench
+
 
 # runtime container stage
 FROM ubuntu:18.04
@@ -23,7 +24,7 @@ FROM ubuntu:18.04
 # RUN apt-get update && \
 #    apt-get install sudo ca-certificates mesa-opencl-icd ocl-icd-opencl-dev -y && \
 #    rm -rf /var/lib/apt/lists/*
-COPY --from=build-env /usr/local/bin/lotus /usr/local/bin/lotus
+COPY --from=build-env /lotus /lotus
 COPY --from=build-env /etc/ssl/certs /etc/ssl/certs
 #COPY LOTUS_VERSION /VERSION
 
