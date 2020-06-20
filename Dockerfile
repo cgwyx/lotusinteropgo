@@ -10,6 +10,8 @@ RUN echo "Building lotus from branch $BRANCH"
 RUN apt-get update -y && \
     apt-get install sudo curl git mesa-opencl-icd ocl-icd-opencl-dev gcc git bzr jq pkg-config -y
 
+WORKDIR /
+
 RUN git clone -b $BRANCH https://github.com/filecoin-project/lotus.git &&\
     cd lotus &&\
     make clean all &&\
