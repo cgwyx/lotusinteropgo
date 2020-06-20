@@ -69,6 +69,11 @@ ENV IPFS_GATEWAY=https://proof-parameters.s3.cn-south-1.jdcloud-oss.com/ipfs/
 
 ENV FIL_PROOFS_MAXIMIZE_CACHING=1
 
+# time adjust
+ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+ntpdate ntp.aliyun.com
+
+
 WORKDIR /lotus
 
 
