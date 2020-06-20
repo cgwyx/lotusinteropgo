@@ -39,6 +39,12 @@ COPY --from=build-env /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/libgcc_s.so.1
 #COPY config/config.toml /root/config.toml
 #COPY scripts/entrypoint /bin/entrypoint
 
+RUN chmod +x /lotus/lotus && \
+    chmod +x /lotus/lotus-storage-miner && \
+    chmod +x /lotus/lotus-seal-worker && \
+    chmod +x /lotus/bench
+
+#chmod u+x /lotus
 
 VOLUME ["/root","/var"]
 
